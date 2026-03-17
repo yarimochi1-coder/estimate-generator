@@ -90,6 +90,7 @@ const PAINTS_NORMAL=[
   {maker:'エスケー化研',product:'プレミアムシリコン',grade:'シリコン',code:'SK-PS15',extUnit:3600,roofProduct:'クールタイトSi',roofCode:'SK-RS10',roofUnit:3300,warranty:10},
   {maker:'日本ペイント',product:'水性シリコンセラUV',grade:'シリコン',code:'ND-S22',extUnit:3500,roofProduct:'ファインシリコンベスト',roofCode:'FSB-100',roofUnit:3200,warranty:10},
 ];
+const ROMAJI={'田中':'T','山田':'Y','佐藤':'S','鈴木':'S','高橋':'T','中村':'N','小林':'K','伊藤':'I','渡辺':'W','加藤':'K','吉田':'Y','松本':'M','井上':'I','木村':'K','林':'H','清水':'S','山口':'Y','岡田':'O','森':'M','池田':'I','西村':'N','藤田':'F','橋本':'H','石田':'I','前田':'M','後藤':'G','小川':'O','岡本':'O','村田':'M','長谷川':'H','健一':'K','誠':'M','博':'H','義雄':'Y','正人':'M','幸雄':'Y','浩二':'K','隆':'T','敏雄':'T','和夫':'K','恵子':'K','幸子':'S','洋子':'Y','美智子':'M','和子':'K','明子':'A','久美子':'K','祥子':'S','雅之':'M','浩之':'H','智子':'T','由美':'Y','裕子':'Y','正雄':'M','一郎':'I'};
 const PAINTS_RISKY=['高耐候塗料（メーカー・品番の記載なし）','遮熱フッ素塗料（型番不明・サンプルなし）','特殊セラミック配合塗料（詳細不明）','弊社オリジナル高耐久塗料（市販品との比較不可）'];
 function rand(a){return a[Math.floor(Math.random()*a.length)];}
 function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
@@ -99,7 +100,9 @@ function genCustomer(){
   const tsubo=randInt(28,42);
   const pool=[...CONDS];const conds=[];
   for(let i=0;i<randInt(2,4);i++){const idx=Math.floor(Math.random()*pool.length);conds.push(pool.splice(idx,1)[0]);}
-  return{name:rand(SURNAMES)+' '+rand(GIVEN),addr:area.pref+rand(area.cities)+rand(STREETS)+randInt(1,5)+'-'+randInt(1,20),tsubo,nensu:randInt(13,32),struct:rand(STRUCTS),conds};
+  const sn=rand(SURNAMES),gn=rand(GIVEN);
+  const initial=ROMAJI[sn]+'.'+ROMAJI[gn];
+  return{name:initial,addr:area.pref+rand(area.cities)+rand(STREETS),tsubo,nensu:randInt(13,32),struct:rand(STRUCTS),conds};
 }
 const FRAUD_PATTERNS=[
   {name:'訪問即決型',scenario:'「近くで工事中で材料が余っています。今日契約なら特別価格でできます」と玄関先で即決を迫る手口。',tricks:['足場代を坪単価8,500円超（相場の2倍以上）に水増し','「余り材」は口実。実際は安価なウレタン塗料をフッ素と偽る','クーリングオフ期間（8日間）の説明を故意に省く','架空の「特殊処理」で費用を大幅に上乗せ'],salesman:{visit:'飛び込み訪問（アポなし）。名刺を渡すが会社名がシール貼りで修正されている',talk:['「今日このエリアで工事中で足場の空きがあります」と切り出す','「この劣化は放置すると雨漏りします。早急に対処が必要です」と煽る','「今日ハンコをもらえれば30万円引きにできます」と即決を迫る','クーリングオフの説明をしない。聞くと「うちは訪問販売に該当しない」と言い張る'],appearance:'作業着姿。会社名の入ったユニフォームだが社名が聞き取りにくい',contact:'携帯番号のみ渡す。固定電話・会社住所の記載なし'},web:{has:false,detail:'会社名で検索してもWebサイトが見当たらない。SNSのみ存在し、開設から数ヶ月以内'},maps:{rating:4.2,count:()=>randInt(8,20),detail:'口コミ件数が少なく、すべて似たような文体の高評価レビューが並ぶ。投稿者アカウントが当日作成のものも',reviews:[{s:5,t:'突然来られましたが丁寧な説明で即決しました！仕上がりも満足です',n:'投稿日：契約日の翌日。アカウント作成日と同日'},{s:5,t:'お安くしていただきありがとうございます。近所でも評判です',n:'投稿者：口コミ履歴がこの1件のみ'},{s:1,t:'契約後に追加請求が来た。クーリングオフを伝えたら急に態度が変わった',n:'オーナー返信なし'}]}},
@@ -190,7 +193,7 @@ document.getElementById('genBtn').addEventListener('click',()=>{
 ${mapBlock}${reviewsBlock}
 ${fraudBlock}
 <div class="wb ${est.warnType}"><div style="font-weight:600;margin-bottom:5px">この見積もりのチェックポイント</div>${warns}</div>
-<div class="foot">※ これはデモ用の架空見積もりです。実際の診断結果は担当者よりご連絡いたします。</div>`;
+`;
   document.getElementById('out').style.display='block';
   document.getElementById('out').scrollIntoView({behavior:'smooth',block:'start'});
 });

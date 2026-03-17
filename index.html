@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>外壁塗装 デモ見積もりジェネレーター</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans','Meiryo',sans-serif;background:#f5f4f0;min-height:100vh;padding:2rem 1rem}
@@ -65,6 +66,7 @@ h1{font-size:18px;font-weight:600;color:#2c2c2a;margin-bottom:4px}
   <h1>外壁塗装 デモ見積もりジェネレーター</h1>
   <p class="sub">ボタンを押すたびに架空の顧客・見積もり・業者情報がランダム生成されます</p>
   <button class="btn-gen" id="genBtn">見積もりを作成する</button>
+  <button class="btn-gen" id="saveBtn" style="display:none;background:#fff;color:#2c2c2a;border:1.5px solid #d3d1c7">画像で保存</button>
   <div id="out"><div class="sheet" id="sheet"></div></div>
 </div>
 <script>
@@ -195,7 +197,20 @@ ${fraudBlock}
 <div class="wb ${est.warnType}"><div style="font-weight:600;margin-bottom:5px">この見積もりのチェックポイント</div>${warns}</div>
 `;
   document.getElementById('out').style.display='block';
+  document.getElementById('saveBtn').style.display='block';
   document.getElementById('out').scrollIntoView({behavior:'smooth',block:'start'});
+});
+document.getElementById('saveBtn').addEventListener('click',()=>{
+  const btn=document.getElementById('saveBtn');
+  btn.textContent='生成中...';btn.disabled=true;
+  html2canvas(document.getElementById('sheet'),{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false}).then(canvas=>{
+    const link=document.createElement('a');
+    const now=new Date();
+    link.download='見積もり_'+now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'.png';
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+    btn.textContent='画像で保存';btn.disabled=false;
+  }).catch(()=>{alert('画像の生成に失敗しました。');btn.textContent='画像で保存';btn.disabled=false;});
 });
 </script>
 </body>
